@@ -3,18 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NAHK Loading</title>
-    <style></style>
-    <link rel="stylesheet" href="nahk.css">
+    <title>NAHK Ultimate Handwritng Effect</title>
+    <style>
+        /* 1. 基础重置与深空背景 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #010208; /* 深邃纯黑，突显光影 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px; /* 为背景粒子添加景深 */
+        }
+
+        /* 2. 动态流光散景背景 (Canvas API 控制) */
+        #bg-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* 3. SVG 书写容器 */
+        .svg-container {
+            position: relative;
+            z-index: 1;
+            width: 90vw;
+            max-width: 1000px;
+            height: auto;
+            /* 整体淡入和微弱的呼吸感 */
+            animation: containerIntro 3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* 4. NAHK路径的核心样式 */
+        .nahk-path {
+            fill: none;
+            stroke-width: 8;          /* 稍微加粗，更有质感 */
+            stroke-linecap: round;     /* 完美的圆润笔尖 */
+            stroke-linejoin: round;    /* 线条交汇处圆润 */
+            
+            /* 使用梦幻极光渐变 */
+            stroke: url(#dream-gradient); 
+
+            /* 设定虚线长度，用来隐藏路径再拉出 */
+            stroke-dasharray: 1200;
+            stroke-dashoffset: 1200;
+            
+            /* 执行书写、发光、墨晕三重动效 */
+            animation: 
+                writeText 5s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+                shimmer 10s linear infinite alternate,
+                bloom墨晕 0.6s ease-out;
+        }
+
+        /* 5. 拆分字母动画延时，形成逐字书写感 */
+        .path-n { animation-delay: 0.3s; }
+        .path-a { animation-delay: 1.2s; }
+        .path-h { animation-delay: 2.1s; }
+        .path-k { animation-delay: 3.0s; }
+
+        /* 6. 核心：书写擦除动画 (关键) */
+        @keyframes writeText {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        /* 7. 多层深度发光与呼吸感 (致敬Apple风格的极致光影) */
+        @keyframes containerIntro {
+            0% {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+                /* 淡淡的霓虹环境发光 */
+                filter: drop-shadow(0 0 10px rgba(79, 172, 254, 0.3)) 
+                        drop-shadow(0 0 30px rgba(112, 0, 255, 0.2))
+                        drop-shadow(0 0 60px rgba(255, 107, 107, 0.1));
+            }
+        }
+
+        /* 8. 笔迹上的流光溢彩动画 */
+        @keyframes shimmer {
+            0% { filter: contrast(1.1) brightness(1.1); }
+            100% { filter: contrast(1.3) brightness(1.3); }
+        }
+
+        /* 9. 模拟墨晕化开的一瞬间 */
+        @keyframes bloom墨晕 {
+            0% { stroke-width: 8; opacity: 1; }
+            50% { stroke-width: 10; opacity: 0.9; }
+            100% { stroke-width: 8; opacity: 1; }
+        }
+
+    </style>
 </head>
 <body>
 
-    <canvas id="bg-canvas"></canvas>
+    <canvas id="bg-particles"></canvas>
 
-    <div class="nahk-container">
-        <h1 class="nahk-text">NAHK</h1>
+    <div class="svg-container">
+        <svg viewBox="0 0 1000 400" width="100%" height="100%" filter="url(#glow)">
+            <defs>
+                <linearGradient id="dream-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#4facfe" /> <stop offset="25%" stop-color="#00f2fe" /> <stop offset="50%" stop-color="#c471ed" /> <stop offset="75%" stop-color="#f5af19" /> <stop offset="100%" stop-color="#4facfe" /> </linearGradient>
+
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur5"/>
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur15"/>
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="25" result="blur25"/>
+                    <feMerge>
+                        <feMergeNode in="blur5"/>
+                        <feMergeNode in="blur15"/>
+                        <feMergeNode in="blur25"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+            </defs>
+
+            <g>
+                <path class="nahk-path path-n" d="M 150,300 C 150,300 160,110 170,110 C 180,110 220,260 240,290 C 255,320 265,280 270,110" />
+                
+                <path class="nahk-path path-a" d="M 320,280 C 350,210 390,210 410,250 C 430,290 400,310 370,310 C 330,310 330,220 370,160 C 400,120 420,120 410,310" />
+                
+                <path class="nahk-path path-h" d="M 500,90 C 490,170 480,310 480,310 M 485,200 C 510,180 550,180 560,210 C 570,240 560,310 560,310 M 570,100 C 565,160 560,260 560,290" />
+                
+                <path class="nahk-path path-k" d="M 660,90 C 655,170 650,310 650,310 M 740,120 C 700,140 670,180 660,200 C 675,210 710,260 740,320" />
+            </g>
+        </svg>
     </div>
 
-    <script src="nahk.js"> </script>
+    <script>
+        // ======= 超酷的动态流光散景背景粒子 =======
+        const canvas = document.getElementById('bg-particles');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        const particles = [];
+        const maxParticles = 80; // 粒子数量
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.z = Math.random() * 5 + 1; // 模拟景深
+                this.vx = (Math.random() - 0.5) * 0.2;
+                this.vy = (Math.random() - 0.5) * 0.2;
+                this.radius = Math.random() * 4 + 1;
+                // 粒子颜色跟随SVG渐变
+                const colors = ['rgba(79, 172, 254, 0.2)', 'rgba(112, 0, 255, 0.1)', 'rgba(255, 107, 107, 0.05)'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                const perspectiveRadius = this.radius * (1 / this.z); // 近大远小
+                const blur = this.z * 1.5; // 近实远虚
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, perspectiveRadius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.filter = `blur(${blur}px)`; // 模拟光学散景
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // 初始化粒子
+        for (let i = 0; i < maxParticles; i++) {
+            particles.push(new Particle());
+        }
+
+        // 动画循环
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            
+            // 绘制粒子
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
 </body>
 </html>
