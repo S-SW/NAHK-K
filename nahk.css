@@ -1,0 +1,107 @@
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #050508; /* 深邃纯黑底色 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* 互动背景 Canvas 铺满 */
+        #bg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none; /* 允许鼠标穿透 */
+        }
+
+        /* 核心巨大的 NAHK 容器 */
+        .nahk-container {
+            position: relative;
+            z-index: 2;
+            cursor: default;
+            user-select: none;
+            /* 整体入场时的淡入和放大动画 */
+            animation: initialScale 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* 巨大的 NAHK 文字样式与动效 */
+        .nahk-text {
+            /* 调整此处的 rem 大小可以控制字体的绝对大小 */
+            font-size: 15rem; 
+            font-weight: 900;
+            letter-spacing: 15px;
+            text-transform: uppercase;
+            
+            /* 渐变色填充技术 */
+            background: linear-gradient(
+                45deg, 
+                #00f2fe 0%, 
+                #4facfe 25%, 
+                #7000ff 50%, 
+                #00f2fe 75%, 
+                #4facfe 100%
+            );
+            background-size: 400% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+
+            /* 叠加流光溢彩与呼吸动效 */
+            animation: 
+                shimmer 6s linear infinite, 
+                breath 4s ease-in-out infinite alternate;
+        }
+
+        /* 入场缩放动画 */
+        @keyframes initialScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+                filter: blur(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+                filter: blur(0);
+            }
+        }
+
+        /* 字体内部流光横向移动 */
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 400% 50%; }
+        }
+
+        /* 字体外发光的呼吸起伏（极具高级感） */
+        @keyframes breath {
+            0% {
+                filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.2)) 
+                        drop-shadow(0 0 30px rgba(112, 0, 255, 0.1));
+                transform: scale(1);
+            }
+            100% {
+                filter: drop-shadow(0 0 40px rgba(0, 242, 254, 0.6)) 
+                        drop-shadow(0 0 70px rgba(112, 0, 255, 0.4));
+                transform: scale(1.02); /* 伴随极其微弱的形变 */
+            }
+        }
+
+        /* 屏幕自适应：防止在手机端字太大溢出 */
+        @media (max-width: 768px) {
+            .nahk-text {
+                font-size: 6rem;
+                letter-spacing: 6px;
+            }
+        }
